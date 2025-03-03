@@ -34,10 +34,24 @@ export default function ResumeEditor({ initialContent, onChange }: ResumeEditorP
     ...getTitleEditorConfig(),
     content: DEFAULT_TITLE_CONTENT,
     onUpdate: ({ editor }) => {
-      // Update the title in the resume data
-      if (onChange) {
-        const content = editor.getJSON();
-        // TODO: Merge title with main content in onChange handler
+      if (onChange && mainEditor) {
+        // Get the title content
+        const titleContent = editor.getHTML();
+        
+        // Get the main content without the title
+        const mainContent = mainEditor.getHTML();
+        
+        // Combine them for the final output
+        const combinedContent = {
+          ...initialContent,
+          basics: {
+            ...initialContent?.basics,
+            name: editor.getText(),
+          },
+          content: mainContent,
+        };
+        
+        onChange(combinedContent as ResumeData);
       }
     },
   });
@@ -46,13 +60,30 @@ export default function ResumeEditor({ initialContent, onChange }: ResumeEditorP
     ...getEditorConfig(),
     content: initialContent || DEFAULT_EDITOR_CONTENT,
     onUpdate: ({ editor }) => {
-      onChange?.(editor.getJSON() as unknown as ResumeData);
+      if (onChange && titleEditor) {
+        // Combine title and main content
+        const combinedContent = {
+          ...initialContent,
+          basics: {
+            ...initialContent?.basics,
+            name: titleEditor.getText(),
+          },
+          content: editor.getHTML(),
+        };
+        
+        onChange(combinedContent as ResumeData);
+      }
     },
   });
 
   const setContent = useCallback((content: ResumeData) => {
-    mainEditor?.commands.setContent(content);
-  }, [mainEditor]);
+    if (content.basics?.name && titleEditor) {
+      titleEditor.commands.setContent(`<h1>${content.basics.name}</h1>`);
+    }
+    if (content.content && mainEditor) {
+      mainEditor.commands.setContent(content.content);
+    }
+  }, [titleEditor, mainEditor]);
 
   const handleExport = useCallback(() => {
     // TODO: Implement export functionality

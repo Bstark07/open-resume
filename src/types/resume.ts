@@ -14,6 +14,7 @@ export interface ResumeData {
     };
     summary?: string;
   };
+  content?: string;  // HTML content of the resume
   work?: WorkExperience[];
   education?: Education[];
   skills?: Skill[];
