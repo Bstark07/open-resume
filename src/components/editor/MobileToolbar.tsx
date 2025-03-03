@@ -4,14 +4,11 @@ import { Editor } from '@tiptap/react';
 import {
   Bold as BoldIcon,
   Italic as ItalicIcon,
-  Underline as UnderlineIcon,
   Link as LinkIcon,
-  AlignLeft as AlignLeftIcon,
-  AlignCenter as AlignCenterIcon,
-  AlignRight as AlignRightIcon,
-  Heading1 as Heading1Icon,
   Heading2 as Heading2Icon,
   Heading3 as Heading3Icon,
+  List as ListIcon,
+  ListOrdered as ListOrderedIcon,
 } from 'lucide-react';
 
 interface MobileToolbarProps {
@@ -22,18 +19,6 @@ export default function MobileToolbar({ editor }: MobileToolbarProps) {
   if (!editor) return null;
 
   const toolbarButtons = [
-    {
-      icon: Heading1Icon,
-      action: () => {
-        if (editor.isActive('heading', { level: 1 })) {
-          editor.chain().focus().setParagraph().run();
-        } else {
-          editor.chain().focus().toggleHeading({ level: 1 }).run();
-        }
-      },
-      isActive: editor.isActive('heading', { level: 1 }),
-      tooltip: 'Heading 1',
-    },
     {
       icon: Heading2Icon,
       action: () => {
@@ -71,10 +56,16 @@ export default function MobileToolbar({ editor }: MobileToolbarProps) {
       tooltip: 'Italic',
     },
     {
-      icon: UnderlineIcon,
-      action: () => editor.chain().focus().toggleMark('underline').run(),
-      isActive: editor.isActive('underline'),
-      tooltip: 'Underline',
+      icon: ListIcon,
+      action: () => editor.chain().focus().toggleBulletList().run(),
+      isActive: editor.isActive('bulletList'),
+      tooltip: 'Bullet List',
+    },
+    {
+      icon: ListOrderedIcon,
+      action: () => editor.chain().focus().toggleOrderedList().run(),
+      isActive: editor.isActive('orderedList'),
+      tooltip: 'Numbered List',
     },
     {
       icon: LinkIcon,
@@ -86,24 +77,6 @@ export default function MobileToolbar({ editor }: MobileToolbarProps) {
       },
       isActive: editor.isActive('link'),
       tooltip: 'Add Link',
-    },
-    {
-      icon: AlignLeftIcon,
-      action: () => editor.chain().focus().setTextAlign('left').run(),
-      isActive: editor.isActive({ textAlign: 'left' }),
-      tooltip: 'Align Left',
-    },
-    {
-      icon: AlignCenterIcon,
-      action: () => editor.chain().focus().setTextAlign('center').run(),
-      isActive: editor.isActive({ textAlign: 'center' }),
-      tooltip: 'Align Center',
-    },
-    {
-      icon: AlignRightIcon,
-      action: () => editor.chain().focus().setTextAlign('right').run(),
-      isActive: editor.isActive({ textAlign: 'right' }),
-      tooltip: 'Align Right',
     },
   ];
 

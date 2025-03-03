@@ -1,37 +1,14 @@
 'use client';
 
 import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import Link from '@tiptap/extension-link';
-import TextAlign from '@tiptap/extension-text-align';
 import { useCallback, useEffect, useState } from 'react';
 import type { ResumeData } from '@/types/resume';
 import FloatingToolbar from './FloatingToolbar';
 import MobileToolbar from './MobileToolbar';
-import { Mail, Phone, Linkedin } from 'lucide-react';
-
-const defaultContent = {
-  type: 'doc',
-  content: [
-    {
-      type: 'heading',
-      attrs: { level: 1, class: 'text-title font-bold' },
-      content: [{ type: 'text', text: 'Your Name' }],
-    },
-    {
-      type: 'paragraph',
-      attrs: { class: 'text-body text-gray-600' },
-      content: [
-        { type: 'text', marks: [{ type: 'link', attrs: { href: 'mailto:' } }], text: 'email@example.com' },
-        { type: 'text', text: ' • ' },
-        { type: 'text', marks: [{ type: 'link', attrs: { href: 'tel:' } }], text: '(555) 555-5555' },
-        { type: 'text', text: ' • ' },
-        { type: 'text', marks: [{ type: 'link', attrs: { href: 'https://linkedin.com/in/' } }], text: 'linkedin.com/in/profile' },
-      ],
-    },
-  ],
-};
+import ActionButtons from './ActionButtons';
+import ContactSection from './ContactSection';
+import { getEditorConfig, getTitleEditorConfig } from './config/editorConfig';
+import { DEFAULT_CONTACT_DETAILS, DEFAULT_EDITOR_CONTENT, DEFAULT_TITLE_CONTENT } from '@/constants/editor';
 
 interface ResumeEditorProps {
   initialContent?: ResumeData;
@@ -40,6 +17,7 @@ interface ResumeEditorProps {
 
 export default function ResumeEditor({ initialContent, onChange }: ResumeEditorProps) {
   const [isMobile, setIsMobile] = useState(false);
+  const [contactDetails, setContactDetails] = useState(DEFAULT_CONTACT_DETAILS);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -52,96 +30,64 @@ export default function ResumeEditor({ initialContent, onChange }: ResumeEditorP
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3],
-          HTMLAttributes: {
-            levels: {
-              1: 'text-title font-bold mt-[var(--spacing-xl)] mb-[var(--spacing-md)]',
-              2: 'text-header font-semibold mt-[var(--spacing-lg)] mb-[var(--spacing-sm)]',
-              3: 'text-subheading font-medium mt-[var(--spacing-md)] mb-[var(--spacing-xs)]',
-            },
-          },
-        },
-        paragraph: {
-          HTMLAttributes: {
-            class: 'text-body mb-[var(--spacing-sm)]',
-          },
-        },
-        bulletList: {
-          HTMLAttributes: {
-            class: 'ml-[var(--spacing-md)] mb-[var(--spacing-md)] space-y-[var(--spacing-xxs)]',
-          },
-        },
-        orderedList: {
-          HTMLAttributes: {
-            class: 'ml-[var(--spacing-md)] mb-[var(--spacing-md)] space-y-[var(--spacing-xxs)]',
-          },
-        },
-        listItem: {
-          HTMLAttributes: {
-            class: 'text-body pl-[var(--spacing-xs)]',
-          },
-        },
-      }),
-      Underline,
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-blue-600 hover:text-blue-800 underline',
-        },
-      }),
-      TextAlign.configure({
-        types: ['heading', 'paragraph'],
-      }),
-    ],
-    content: initialContent || defaultContent,
+  const titleEditor = useEditor({
+    ...getTitleEditorConfig(),
+    content: DEFAULT_TITLE_CONTENT,
+    onUpdate: ({ editor }) => {
+      // Update the title in the resume data
+      if (onChange) {
+        const content = editor.getJSON();
+        // TODO: Merge title with main content in onChange handler
+      }
+    },
+  });
+
+  const mainEditor = useEditor({
+    ...getEditorConfig(),
+    content: initialContent || DEFAULT_EDITOR_CONTENT,
     onUpdate: ({ editor }) => {
       onChange?.(editor.getJSON() as unknown as ResumeData);
-    },
-    editorProps: {
-      attributes: {
-        class: 'prose max-w-none focus:outline-none min-h-screen',
-      },
     },
   });
 
   const setContent = useCallback((content: ResumeData) => {
-    editor?.commands.setContent(content);
-  }, [editor]);
+    mainEditor?.commands.setContent(content);
+  }, [mainEditor]);
+
+  const handleExport = useCallback(() => {
+    // TODO: Implement export functionality
+    console.log('Export clicked');
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
-      <MobileToolbar editor={editor} />
+      <MobileToolbar editor={mainEditor} />
+      <ActionButtons onExport={handleExport} />
       <div className="resume-container">
-        <FloatingToolbar editor={editor} />
+        <FloatingToolbar editor={mainEditor} />
         <div className="section rounded-lg bg-white p-[var(--spacing-md)] shadow-sm sm:p-[var(--spacing-lg)] md:p-[var(--spacing-xl)]">
-          <div className="flex flex-col gap-[var(--spacing-xs)] sm:flex-row sm:items-start sm:justify-between">
-            <div className="w-full sm:w-2/3">
-              <div className="flex items-center gap-[var(--spacing-xs)]">
-                <EditorContent editor={editor} />
-              </div>
-            </div>
-            <div className="w-full sm:w-1/3">
-              <div className="flex flex-col gap-[var(--spacing-xs)] text-gray-600">
-                <div className="flex items-center gap-[var(--spacing-xs)]">
-                  <Mail className="h-4 w-4" />
-                  <a href="mailto:" className="hover:text-blue-600">email@example.com</a>
-                </div>
-                <div className="flex items-center gap-[var(--spacing-xs)]">
-                  <Phone className="h-4 w-4" />
-                  <a href="tel:" className="hover:text-blue-600">(555) 555-5555</a>
-                </div>
-                <div className="flex items-center gap-[var(--spacing-xs)]">
-                  <Linkedin className="h-4 w-4" />
-                  <a href="https://linkedin.com/in/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
-                    linkedin.com/in/profile
-                  </a>
+          {/* Header Section with Title and Contact Details */}
+          <div className="mb-[var(--spacing-lg)] border-b pb-[var(--spacing-md)]">
+            <div className="flex flex-col gap-[var(--spacing-md)] sm:flex-row sm:items-start sm:justify-between">
+              <div className="w-full sm:w-2/3">
+                {/* Title Block */}
+                <div className="prose max-w-none focus-within:outline-none">
+                  <EditorContent editor={titleEditor} />
                 </div>
               </div>
+              <div className="w-full sm:w-1/3">
+                {/* Contact Details Block */}
+                <ContactSection 
+                  contactDetails={contactDetails}
+                  onContactChange={setContactDetails}
+                />
+              </div>
             </div>
+          </div>
+
+          {/* Full-width Document Editing Area */}
+          <div className="w-full">
+            <EditorContent editor={mainEditor} />
           </div>
         </div>
       </div>
