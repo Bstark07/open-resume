@@ -19,6 +19,11 @@ interface FloatingToolbarProps {
 export default function FloatingToolbar({ editor }: FloatingToolbarProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window);
+  }, []);
 
   const updateToolbarPosition = useCallback(() => {
     if (!editor?.view || !editor.isActive) return;
@@ -32,22 +37,19 @@ export default function FloatingToolbar({ editor }: FloatingToolbarProps) {
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
 
-    // Position the toolbar above the selection
+    // Position the toolbar above the selection with proper spacing
     setPosition({
-      top: rect.top - 50 + window.scrollY,
-      left: rect.left + rect.width / 2,
+      top: Math.max(rect.top - (isTouchDevice ? 60 : 50) + window.scrollY, 10),
+      left: Math.min(Math.max(rect.left + rect.width / 2, 100), window.innerWidth - 100),
     });
     setIsVisible(true);
-  }, [editor]);
+  }, [editor, isTouchDevice]);
 
   useEffect(() => {
     if (!editor) return;
 
-    // Update position when selection changes
     document.addEventListener('selectionchange', updateToolbarPosition);
-    // Update position when window is resized
     window.addEventListener('resize', updateToolbarPosition);
-    // Update position when scrolling
     window.addEventListener('scroll', updateToolbarPosition);
 
     return () => {
@@ -111,23 +113,33 @@ export default function FloatingToolbar({ editor }: FloatingToolbarProps) {
 
   return (
     <div
-      className="fixed z-50 -translate-x-1/2 transform rounded-lg bg-white p-1 shadow-lg ring-1 ring-black/10 transition-opacity duration-200"
+      className={`fixed z-[var(--z-popover)] -translate-x-1/2 transform rounded-[var(--radius-lg)] bg-white p-[var(--spacing-xxs)] shadow-lg ring-1 ring-black/10 transition-all duration-[var(--transition-normal)] ${
+        isTouchDevice ? 'touch-manipulation' : ''
+      }`}
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
       }}
     >
-      <div className="flex items-center gap-0.5">
+      <div className="flex items-center gap-[var(--spacing-xxs)]">
         {toolbarButtons.map((button, index) => (
           <button
             key={index}
             onClick={button.action}
-            className={`rounded p-1.5 transition-colors hover:bg-gray-100 ${
+            className={`rounded-[var(--radius-md)] p-[var(--spacing-xs)] transition-colors duration-[var(--transition-fast)] hover:bg-gray-100 active:bg-gray-200 ${
               button.isActive ? 'bg-gray-100 text-blue-600' : 'text-gray-600'
+            } ${
+              isTouchDevice
+                ? 'min-h-[var(--touch-target-size)] min-w-[var(--touch-target-size)]'
+                : ''
             }`}
             title={button.tooltip}
           >
-            <button.icon className="h-4 w-4" />
+            <button.icon
+              className={`${
+                isTouchDevice ? 'h-5 w-5' : 'h-4 w-4'
+              }`}
+            />
           </button>
         ))}
       </div>

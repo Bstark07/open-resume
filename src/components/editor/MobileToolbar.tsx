@@ -90,13 +90,14 @@ export default function MobileToolbar({ editor }: MobileToolbarProps) {
   ];
 
   return (
-    <div className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-sm md:hidden">
-      <div className="flex flex-wrap items-center gap-0.5 p-1">
+    <div className="sticky top-0 z-[var(--z-sticky)] border-b bg-white/95 backdrop-blur-sm supports-[backdrop-filter]:bg-white/80 md:hidden">
+      <div className="safe-area-inset-top" />
+      <div className="scrollbar-none touch-manipulation flex items-center gap-[var(--spacing-xxs)] overflow-x-auto overscroll-x-contain p-[var(--spacing-xs)]">
         {toolbarButtons.map((button, index) => (
           <button
             key={index}
             onClick={button.action}
-            className={`rounded p-2 transition-colors hover:bg-gray-100 ${
+            className={`min-h-[var(--touch-target-size)] min-w-[var(--touch-target-size)] rounded-[var(--radius-lg)] p-[var(--spacing-sm)] transition-colors duration-[var(--transition-fast)] hover:bg-gray-100 active:bg-gray-200 ${
               button.isActive ? 'bg-gray-100 text-blue-600' : 'text-gray-600'
             }`}
             title={button.tooltip}
