@@ -2,19 +2,63 @@ import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
 import { EDITOR_CLASSES } from '@/constants/editor';
+import type { EditorOptions } from '@tiptap/react';
 
-export const getTitleEditorConfig = () => ({
+const baseConfig: Partial<EditorOptions> = {
+  enableInputRules: true,
+  enablePasteRules: true,
+  enableCoreExtensions: true,
+  injectCSS: false,
+  editable: true,
+};
+
+const starterKitConfig = {
+  heading: {
+    levels: [1, 2, 3],
+    HTMLAttributes: {
+      levels: {
+        1: {
+          class: 'text-[var(--font-title)] font-bold mt-0 mb-[var(--spacing-md)] outline-none',
+        },
+        2: {
+          class: 'text-header font-semibold mt-[var(--spacing-lg)] mb-[var(--spacing-sm)]'
+        },
+        3: {
+          class: 'text-subheading font-medium mt-[var(--spacing-md)] mb-[var(--spacing-xs)]'
+        }
+      }
+    }
+  },
+  paragraph: {
+    HTMLAttributes: {
+      class: EDITOR_CLASSES.paragraph,
+    },
+  },
+  bulletList: {
+    HTMLAttributes: {
+      class: EDITOR_CLASSES.bulletList,
+    },
+  },
+  orderedList: {
+    HTMLAttributes: {
+      class: EDITOR_CLASSES.orderedList,
+    },
+  },
+  listItem: {
+    HTMLAttributes: {
+      class: EDITOR_CLASSES.listItem,
+    },
+  },
+};
+
+export const getTitleEditorConfig = (): Partial<EditorOptions> => ({
+  ...baseConfig,
   extensions: [
     StarterKit.configure({
+      ...starterKitConfig,
       heading: {
+        ...starterKitConfig.heading,
         levels: [1],
-        HTMLAttributes: {
-          levels: {
-            1: {
-              class: 'text-[var(--font-title)] font-bold mt-0 mb-[var(--spacing-md)] outline-none',
-            }
-          }
-        }
       },
       paragraph: false,
       bulletList: false,
@@ -34,41 +78,14 @@ export const getTitleEditorConfig = () => ({
   },
 });
 
-export const getEditorConfig = () => ({
+export const getEditorConfig = (): Partial<EditorOptions> => ({
+  ...baseConfig,
   extensions: [
     StarterKit.configure({
+      ...starterKitConfig,
       heading: {
+        ...starterKitConfig.heading,
         levels: [2, 3],
-        HTMLAttributes: {
-          levels: {
-            2: {
-              class: 'text-header font-semibold mt-[var(--spacing-lg)] mb-[var(--spacing-sm)]'
-            },
-            3: {
-              class: 'text-subheading font-medium mt-[var(--spacing-md)] mb-[var(--spacing-xs)]'
-            }
-          }
-        }
-      },
-      paragraph: {
-        HTMLAttributes: {
-          class: EDITOR_CLASSES.paragraph,
-        },
-      },
-      bulletList: {
-        HTMLAttributes: {
-          class: EDITOR_CLASSES.bulletList,
-        },
-      },
-      orderedList: {
-        HTMLAttributes: {
-          class: EDITOR_CLASSES.orderedList,
-        },
-      },
-      listItem: {
-        HTMLAttributes: {
-          class: EDITOR_CLASSES.listItem,
-        },
       },
     }),
     Underline,
