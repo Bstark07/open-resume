@@ -13,7 +13,6 @@ import {
   Heading1 as Heading1Icon,
   Heading2 as Heading2Icon,
   Heading3 as Heading3Icon,
-  Type as TypeIcon,
 } from 'lucide-react';
 
 interface FloatingToolbarProps {
@@ -74,26 +73,38 @@ export default function FloatingToolbar({ editor }: FloatingToolbarProps) {
 
   const textControls: ToolbarButton[] = [
     {
-      icon: TypeIcon,
-      action: () => editor.chain().focus().setParagraph().run(),
-      isActive: editor.isActive('paragraph'),
-      tooltip: 'Normal Text',
-    },
-    {
       icon: Heading1Icon,
-      action: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
+      action: () => {
+        if (editor.isActive('heading', { level: 1 })) {
+          editor.chain().focus().setParagraph().run();
+        } else {
+          editor.chain().focus().toggleHeading({ level: 1 }).run();
+        }
+      },
       isActive: editor.isActive('heading', { level: 1 }),
       tooltip: 'Heading 1',
     },
     {
       icon: Heading2Icon,
-      action: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
+      action: () => {
+        if (editor.isActive('heading', { level: 2 })) {
+          editor.chain().focus().setParagraph().run();
+        } else {
+          editor.chain().focus().toggleHeading({ level: 2 }).run();
+        }
+      },
       isActive: editor.isActive('heading', { level: 2 }),
       tooltip: 'Heading 2',
     },
     {
       icon: Heading3Icon,
-      action: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
+      action: () => {
+        if (editor.isActive('heading', { level: 3 })) {
+          editor.chain().focus().setParagraph().run();
+        } else {
+          editor.chain().focus().toggleHeading({ level: 3 }).run();
+        }
+      },
       isActive: editor.isActive('heading', { level: 3 }),
       tooltip: 'Heading 3',
     },

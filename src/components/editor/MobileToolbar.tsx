@@ -23,6 +23,42 @@ export default function MobileToolbar({ editor }: MobileToolbarProps) {
 
   const toolbarButtons = [
     {
+      icon: Heading1Icon,
+      action: () => {
+        if (editor.isActive('heading', { level: 1 })) {
+          editor.chain().focus().setParagraph().run();
+        } else {
+          editor.chain().focus().toggleHeading({ level: 1 }).run();
+        }
+      },
+      isActive: editor.isActive('heading', { level: 1 }),
+      tooltip: 'Heading 1',
+    },
+    {
+      icon: Heading2Icon,
+      action: () => {
+        if (editor.isActive('heading', { level: 2 })) {
+          editor.chain().focus().setParagraph().run();
+        } else {
+          editor.chain().focus().toggleHeading({ level: 2 }).run();
+        }
+      },
+      isActive: editor.isActive('heading', { level: 2 }),
+      tooltip: 'Heading 2',
+    },
+    {
+      icon: Heading3Icon,
+      action: () => {
+        if (editor.isActive('heading', { level: 3 })) {
+          editor.chain().focus().setParagraph().run();
+        } else {
+          editor.chain().focus().toggleHeading({ level: 3 }).run();
+        }
+      },
+      isActive: editor.isActive('heading', { level: 3 }),
+      tooltip: 'Heading 3',
+    },
+    {
       icon: BoldIcon,
       action: () => editor.chain().focus().toggleBold().run(),
       isActive: editor.isActive('bold'),
@@ -39,24 +75,6 @@ export default function MobileToolbar({ editor }: MobileToolbarProps) {
       action: () => editor.chain().focus().toggleMark('underline').run(),
       isActive: editor.isActive('underline'),
       tooltip: 'Underline',
-    },
-    {
-      icon: Heading1Icon,
-      action: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-      isActive: editor.isActive('heading', { level: 1 }),
-      tooltip: 'Heading 1',
-    },
-    {
-      icon: Heading2Icon,
-      action: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-      isActive: editor.isActive('heading', { level: 2 }),
-      tooltip: 'Heading 2',
-    },
-    {
-      icon: Heading3Icon,
-      action: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
-      isActive: editor.isActive('heading', { level: 3 }),
-      tooltip: 'Heading 3',
     },
     {
       icon: LinkIcon,

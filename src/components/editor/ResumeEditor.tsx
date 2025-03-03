@@ -9,6 +9,29 @@ import { useCallback, useEffect, useState } from 'react';
 import type { ResumeData } from '@/types/resume';
 import FloatingToolbar from './FloatingToolbar';
 import MobileToolbar from './MobileToolbar';
+import { Mail, Phone, Linkedin } from 'lucide-react';
+
+const defaultContent = {
+  type: 'doc',
+  content: [
+    {
+      type: 'heading',
+      attrs: { level: 1, class: 'text-title font-bold' },
+      content: [{ type: 'text', text: 'Your Name' }],
+    },
+    {
+      type: 'paragraph',
+      attrs: { class: 'text-body text-gray-600' },
+      content: [
+        { type: 'text', marks: [{ type: 'link', attrs: { href: 'mailto:' } }], text: 'email@example.com' },
+        { type: 'text', text: ' • ' },
+        { type: 'text', marks: [{ type: 'link', attrs: { href: 'tel:' } }], text: '(555) 555-5555' },
+        { type: 'text', text: ' • ' },
+        { type: 'text', marks: [{ type: 'link', attrs: { href: 'https://linkedin.com/in/' } }], text: 'linkedin.com/in/profile' },
+      ],
+    },
+  ],
+};
 
 interface ResumeEditorProps {
   initialContent?: ResumeData;
@@ -74,13 +97,13 @@ export default function ResumeEditor({ initialContent, onChange }: ResumeEditorP
         types: ['heading', 'paragraph'],
       }),
     ],
-    content: initialContent || '',
+    content: initialContent || defaultContent,
     onUpdate: ({ editor }) => {
       onChange?.(editor.getJSON() as unknown as ResumeData);
     },
     editorProps: {
       attributes: {
-        class: 'prose max-w-none focus:outline-none min-h-screen space-y-[var(--spacing-xs)]',
+        class: 'prose max-w-none focus:outline-none min-h-screen',
       },
     },
   });
@@ -95,7 +118,31 @@ export default function ResumeEditor({ initialContent, onChange }: ResumeEditorP
       <div className="resume-container">
         <FloatingToolbar editor={editor} />
         <div className="section rounded-lg bg-white p-[var(--spacing-md)] shadow-sm sm:p-[var(--spacing-lg)] md:p-[var(--spacing-xl)]">
-          <EditorContent editor={editor} />
+          <div className="flex flex-col gap-[var(--spacing-xs)] sm:flex-row sm:items-start sm:justify-between">
+            <div className="w-full sm:w-2/3">
+              <div className="flex items-center gap-[var(--spacing-xs)]">
+                <EditorContent editor={editor} />
+              </div>
+            </div>
+            <div className="w-full sm:w-1/3">
+              <div className="flex flex-col gap-[var(--spacing-xs)] text-gray-600">
+                <div className="flex items-center gap-[var(--spacing-xs)]">
+                  <Mail className="h-4 w-4" />
+                  <a href="mailto:" className="hover:text-blue-600">email@example.com</a>
+                </div>
+                <div className="flex items-center gap-[var(--spacing-xs)]">
+                  <Phone className="h-4 w-4" />
+                  <a href="tel:" className="hover:text-blue-600">(555) 555-5555</a>
+                </div>
+                <div className="flex items-center gap-[var(--spacing-xs)]">
+                  <Linkedin className="h-4 w-4" />
+                  <a href="https://linkedin.com/in/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
+                    linkedin.com/in/profile
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
