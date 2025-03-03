@@ -34,6 +34,33 @@ export default function ResumeEditor({ initialContent, onChange }: ResumeEditorP
       StarterKit.configure({
         heading: {
           levels: [1, 2, 3],
+          HTMLAttributes: {
+            levels: {
+              1: 'text-title font-bold mt-[var(--spacing-xl)] mb-[var(--spacing-md)]',
+              2: 'text-header font-semibold mt-[var(--spacing-lg)] mb-[var(--spacing-sm)]',
+              3: 'text-subheading font-medium mt-[var(--spacing-md)] mb-[var(--spacing-xs)]',
+            },
+          },
+        },
+        paragraph: {
+          HTMLAttributes: {
+            class: 'text-body mb-[var(--spacing-sm)]',
+          },
+        },
+        bulletList: {
+          HTMLAttributes: {
+            class: 'ml-[var(--spacing-md)] mb-[var(--spacing-md)] space-y-[var(--spacing-xxs)]',
+          },
+        },
+        orderedList: {
+          HTMLAttributes: {
+            class: 'ml-[var(--spacing-md)] mb-[var(--spacing-md)] space-y-[var(--spacing-xxs)]',
+          },
+        },
+        listItem: {
+          HTMLAttributes: {
+            class: 'text-body pl-[var(--spacing-xs)]',
+          },
         },
       }),
       Underline,
@@ -53,7 +80,7 @@ export default function ResumeEditor({ initialContent, onChange }: ResumeEditorP
     },
     editorProps: {
       attributes: {
-        class: 'prose max-w-none focus:outline-none min-h-[11in] sm:min-h-0',
+        class: 'prose max-w-none focus:outline-none min-h-screen space-y-[var(--spacing-xs)]',
       },
     },
   });
